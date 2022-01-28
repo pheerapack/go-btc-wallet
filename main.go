@@ -1,32 +1,39 @@
 package main
 
 import (
-	"encoding/json"
+	"database/sql"
 	"fmt"
+	"log"
 	"net/http"
-	"time"
 
 	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
 )
 
+type App struct {
+	Router *mux.Router
+	DB     *sql.DB
+}
+
+func (a *App) Initialize(user, password, dbname string) {
+	connectionString :=
+		fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", user, password, dbname)
+
+	var err error
+	a.DB, err = sql.Open("postgres", connectionString)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	a.Router = mux.NewRouter()
+}
+
+func (a *App) Run(addr string) {
+	log.Fatal(http.ListenAndServe(":8010", a.Router))
+}
+
 func main() {
-	r := mux.NewRouter()
-	r.HandleFunc("/books/{title}", StoreBTC).Methods("POST")
-
-	http.ListenAndServe(":80", r)
-}
-
-func StoreBTC(w http.ResponseWriter, r *http.Request) {
-	// vars := mux.Vars(r)
-	// title := vars["title"]
-	// page := vars["page"]
-
-	req := requestBody{}
-	json.Unmarshal(r.Body.Read(), req)
-	fmt.Fprintf(w, "You've requested the book: %s on page %s\n", title, page)
-}
-
-type requestBody struct {
-	DateTime time.Time `json:"datetime"`
-	Amount   float64   `json:"amount"`
+	a := App{}
+	a.Initialize("postgres", "postgres", "wallet")
+	a.Run(":8010")
 }
