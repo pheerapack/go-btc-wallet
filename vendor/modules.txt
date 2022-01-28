@@ -1,6 +1,6 @@
-# github.com/gorilla/mux v1.8.0
-## explicit; go 1.12
-github.com/gorilla/mux
+# github.com/julienschmidt/httprouter v1.3.0
+## explicit; go 1.7
+github.com/julienschmidt/httprouter
 # github.com/lib/pq v1.10.4
 ## explicit; go 1.13
 github.com/lib/pq
