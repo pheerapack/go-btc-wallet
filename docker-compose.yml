@@ -1,0 +1,15 @@
+version: '3.2'
+networks:
+  shared-network:
+    driver: bridge
+services:
+  healthcheck:
+    networks:
+      - shared-network
+    hostname: "host"
+    ipc: host
+    pid: "host"
+    build:
+      context: .
+      dockerfile: docker/dockerfile
+    restart: always
