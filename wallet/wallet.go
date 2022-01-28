@@ -1,4 +1,4 @@
-package main
+package wallet
 
 import (
 	"database/sql"
@@ -26,6 +26,15 @@ func (s *server) setupRoutes() {
 	s.router.GET("/health", s.HealthCheck())
 	s.router.GET("/customer", s.GetCustomer())
 	s.router.POST("/customer", s.PostCustomer())
+}
+
+func Wallet() {
+	log.Println("Listening on port 8010")
+	s := &server{}
+	s.setupRoutes()
+	s.setupDB()
+
+	log.Fatal(http.ListenAndServe(":8010", s.router))
 }
 
 type customer struct {
@@ -140,13 +149,4 @@ func (s *server) HealthCheck() httprouter.Handle {
 		log.Println("Health endpoint hit")
 		fmt.Fprintf(w, "healthy")
 	}
-}
-
-func main() {
-	log.Println("Listening on port 8010")
-	s := &server{}
-	s.setupRoutes()
-	s.setupDB()
-
-	log.Fatal(http.ListenAndServe(":8010", s.router))
 }

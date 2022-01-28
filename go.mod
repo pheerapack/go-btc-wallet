@@ -1,4 +1,4 @@
-module github.com/pheerapack/goHttpServer
+module github.com/pheerapack/go-btc-wallet
 
 go 1.17
 
