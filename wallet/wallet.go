@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/julienschmidt/httprouter"
 
@@ -39,13 +40,6 @@ func Wallet() {
 }
 
 func (s *server) GetBTCWithTime() httprouter.Handle {
-	type Req struct {
-		ID       int
-		Username string `json:"username"`
-	}
-	type Res struct {
-		Customer *customer
-	}
 
 	return func(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		var req RequestGetBTCBody
@@ -69,11 +63,6 @@ func (s *server) GetBTCWithTime() httprouter.Handle {
 			panic(err)
 		}
 	}
-}
-
-type customer struct {
-	ID       int    `json:"id"`
-	Username string `json:"username"`
 }
 
 func (s *server) PostStoreIntoWallet() httprouter.Handle {
@@ -104,16 +93,16 @@ func (d *datastore) StoreToWallet(data RequestStoreBTCBody) error {
 	return err
 }
 
-func (d *datastore) GetBTCInDB(input RequestGetBTCBody) (*customer, error) {
-	var c *customer
-	// rows, err := d.db.Query("SELECT id, username FROM customer WHERE id = $1", 1)
-	// if err != nil {
-	// 	log.Println("AAAAAAAAAAA", err)
-	// 	return nil, err
-	// }
-	// err = rows.Scan(&c)
-	// log.Println("BBBBBBB", err)
-	stmt := "SELECT amount FROM my_pocket WHERE date_time = $1"
+//ResponseBody2 : response body
+type ResponseBody2 struct {
+	DateTime time.Time `json:"date_time"`
+	Amount   int64     `json:"amount"`
+}
+
+func (d *datastore) GetBTCInDB(input RequestGetBTCBody) (*ResponseBody, error) {
+	var c *ResponseBody
+
+	stmt := "SELECT date_time,amount FROM my_pocket WHERE date_time = $1"
 	rows, err := d.db.Query(stmt, input.StartDateTime)
 	if err != nil {
 		return nil, err
@@ -121,11 +110,12 @@ func (d *datastore) GetBTCInDB(input RequestGetBTCBody) (*customer, error) {
 	defer rows.Close()
 	// iterate over the result and print out the titles
 	for rows.Next() {
-		var title float64
-		if err := rows.Scan(&title); err != nil {
+		var id time.Time
+		var amount float64
+		if err := rows.Scan(&id, &amount); err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println("title", title)
+		fmt.Println("title", id, amount)
 	}
 	return c, err
 }
