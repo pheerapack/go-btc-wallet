@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/guregu/null"
 	"github.com/julienschmidt/httprouter"
 
 	_ "github.com/lib/pq"
@@ -55,7 +56,9 @@ func (s *server) GetBTCWithTime() httprouter.Handle {
 		}
 
 		log.Println(myWallet)
-		res := Response{}
+		res := Response{
+			RsBody: myWallet,
+		}
 
 		encoder := json.NewEncoder(w)
 		err = encoder.Encode(res)
@@ -99,8 +102,8 @@ type ResponseBody2 struct {
 	Amount   int64     `json:"amount"`
 }
 
-func (d *datastore) GetBTCInDB(input RequestGetBTCBody) (*ResponseBody, error) {
-	var c *ResponseBody
+func (d *datastore) GetBTCInDB(input RequestGetBTCBody) ([]ResponseBody, error) {
+	var c []ResponseBody
 
 	stmt := "SELECT date_time,amount FROM my_pocket WHERE date_time = $1"
 	rows, err := d.db.Query(stmt, input.StartDateTime)
@@ -110,12 +113,17 @@ func (d *datastore) GetBTCInDB(input RequestGetBTCBody) (*ResponseBody, error) {
 	defer rows.Close()
 	// iterate over the result and print out the titles
 	for rows.Next() {
-		var id time.Time
+		var dateTime time.Time
 		var amount float64
-		if err := rows.Scan(&id, &amount); err != nil {
+		if err := rows.Scan(&dateTime, &amount); err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println("title", id, amount)
+		fmt.Println("title", dateTime, amount)
+		a := ResponseBody{
+			DateTime: null.NewTime(dateTime, true),
+			Amount:   null.FloatFrom(amount),
+		}
+		c = append(c, a)
 	}
 	return c, err
 }

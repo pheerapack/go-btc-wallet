@@ -21,11 +21,11 @@ type RequestGetBTCBody struct {
 
 //Response : response array with time in hour
 type Response struct {
-	RsBody *ResponseBody
+	RsBody []ResponseBody
 }
 
 //ResponseBody : response body
 type ResponseBody struct {
-	DateTime string `json:"date_time"`
-	Amount   int64  `json:"amount"`
+	DateTime null.Time  `json:"date_time"`
+	Amount   null.Float `json:"amount"`
 }
