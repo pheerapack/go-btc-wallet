@@ -2,7 +2,6 @@ package wallet
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -12,22 +11,35 @@ func (s *server) PostStoreIntoWallet() httprouter.Handle {
 
 	return func(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		var req RequestStoreBTCBody
+		var res ResponseError
 
 		decoder := json.NewDecoder(r.Body)
 		err := decoder.Decode(&req)
 		if err != nil {
-			panic(err)
+			res = ResponseError{
+				ResponseBodyErr: ResponseErrorBody{
+					Error: err.Error(),
+				},
+			}
+			// fmt.Fprintf(w, res)
 		}
 
 		err = s.db.StoreToWallet(req)
 		if err != nil {
-			panic(err)
+			res = ResponseError{
+				ResponseBodyErr: ResponseErrorBody{
+					Error: err.Error(),
+				},
+			}
+			// fmt.Fprintf(w, res)
 		}
 
-		res := &ResponseError{
-			Error: "",
+		w.Header().Add("Content-Type", "application/json")
+		encoder := json.NewEncoder(w)
+		err = encoder.Encode(res)
+		if err != nil {
+			panic(err)
 		}
-		fmt.Fprintf(w, res.Error)
 	}
 }
 

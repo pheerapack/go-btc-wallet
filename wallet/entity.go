@@ -10,6 +10,11 @@ type RequestStoreBTCBody struct {
 
 //ResponseError : response if there is an error
 type ResponseError struct {
+	ResponseBodyErr ResponseErrorBody `json:"error"`
+}
+
+//ResponseErrorBody : response if there is an error
+type ResponseErrorBody struct {
 	Error string
 }
 

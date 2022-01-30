@@ -75,7 +75,7 @@ func (d *datastore) GetBTCInDB() ([]ResponseBody, error) {
 func (d *datastore) GetBTCInDBWithTime(req RequestGetBTCBody) ([]ResponseBody, error) {
 	var c []ResponseBody
 
-	stmt := "SELECT date_time,amount FROM my_pocket WHERE date_time BETWEEN $1 AND $2"
+	stmt := "SELECT date_time,amount FROM summary_by_hour WHERE date_time BETWEEN $1 AND $2"
 	rows, err := d.db.Query(stmt, req.StartDateTime.Time, req.EndDateTime.Time)
 	if err != nil {
 		return nil, err

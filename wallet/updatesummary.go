@@ -1,6 +1,7 @@
 package wallet
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -12,27 +13,39 @@ import (
 func (s *server) UpdateSummary() httprouter.Handle {
 
 	return func(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+		var res ResponseError
 
 		err := s.db.UpdateSummayByHour()
 		if err != nil {
 			panic(err)
 		}
 
-		res := &ResponseError{
-			Error: "",
+		w.Header().Add("Content-Type", "application/json")
+		encoder := json.NewEncoder(w)
+		err = encoder.Encode(res)
+		if err != nil {
+			panic(err)
 		}
-		fmt.Fprintf(w, res.Error)
 	}
 }
 
 func (d *datastore) UpdateSummayByHour() error {
+
+	err := d.DeleteSummayByHour()
+	if err != nil {
+		return err
+	}
 
 	allBTCInMyWallet, err := d.GetBTCInDB()
 	if err != nil {
 		return err
 	}
 
-	err = d.SummayByHour(allBTCInMyWallet)
+	allBTCInMyWalletSummary := summaryByHour(allBTCInMyWallet)
+
+	fmt.Println("allBTCInMyWalletSummary : ", allBTCInMyWalletSummary)
+
+	err = d.StoreSummayByHour(allBTCInMyWalletSummary)
 	if err != nil {
 		return err
 	}
@@ -40,9 +53,10 @@ func (d *datastore) UpdateSummayByHour() error {
 	return nil
 }
 
-func (d *datastore) SummayByHour(data []ResponseBody) error {
+func (d *datastore) StoreSummayByHour(data []ResponseBody) error {
 
 	for _, btcEachTime := range data {
+		fmt.Println("Saving...:", btcEachTime.DateTime, btcEachTime.Amount)
 		_, err := d.db.Exec("INSERT INTO summary_by_hour (date_time,amount) VALUES($1,$2)", btcEachTime.DateTime, btcEachTime.Amount)
 		if err != nil {
 			return err
@@ -50,6 +64,14 @@ func (d *datastore) SummayByHour(data []ResponseBody) error {
 	}
 
 	return nil
+}
+
+func (d *datastore) DeleteSummayByHour() error {
+
+	_, err := d.db.Exec("DELETE FROM summary_by_hour")
+
+	return err
+
 }
 
 func summaryByHour(allBTCInMyWallet []ResponseBody) []ResponseBody {
