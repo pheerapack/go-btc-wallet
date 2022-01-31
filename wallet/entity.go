@@ -8,10 +8,14 @@ type RequestStoreBTCBody struct {
 	Amount   null.Int  `json:"amount"`
 }
 
-//ResponseError : response if there is an error
-type ResponseError struct {
-	ResponseBodyErr ResponseErrorBody `json:"error"`
+//ResponseData : response if there is an error
+type ResponseData struct {
+	ResponseSuccess *ResponseSuccessBody `json:"success"`
+	ResponseBodyErr *ResponseErrorBody   `json:"error"`
 }
+
+//ResponseSuccessBody :  for success
+type ResponseSuccessBody struct{}
 
 //ResponseErrorBody : response if there is an error
 type ResponseErrorBody struct {

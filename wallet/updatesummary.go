@@ -13,7 +13,7 @@ import (
 func (s *server) UpdateSummary() httprouter.Handle {
 
 	return func(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-		var res ResponseError
+		var res ResponseData
 
 		err := s.db.UpdateSummayByHour()
 		if err != nil {

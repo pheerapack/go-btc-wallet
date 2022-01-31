@@ -11,13 +11,13 @@ func (s *server) PostStoreIntoWallet() httprouter.Handle {
 
 	return func(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		var req RequestStoreBTCBody
-		var res ResponseError
+		var res ResponseData
 
 		decoder := json.NewDecoder(r.Body)
 		err := decoder.Decode(&req)
 		if err != nil {
-			res = ResponseError{
-				ResponseBodyErr: ResponseErrorBody{
+			res = ResponseData{
+				ResponseBodyErr: &ResponseErrorBody{
 					Error: err.Error(),
 				},
 			}
@@ -26,8 +26,8 @@ func (s *server) PostStoreIntoWallet() httprouter.Handle {
 
 		err = s.db.StoreToWallet(req)
 		if err != nil {
-			res = ResponseError{
-				ResponseBodyErr: ResponseErrorBody{
+			res = ResponseData{
+				ResponseBodyErr: &ResponseErrorBody{
 					Error: err.Error(),
 				},
 			}
