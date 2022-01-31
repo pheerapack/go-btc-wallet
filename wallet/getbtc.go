@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/guregu/null"
 	"github.com/julienschmidt/httprouter"
 )
@@ -15,11 +16,22 @@ func (s *server) GetBTCWithTime() httprouter.Handle {
 
 	return func(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		var req RequestGetBTCBody
+		var res ResponseData
 
 		decoder := json.NewDecoder(r.Body)
 		err := decoder.Decode(&req)
 		if err != nil {
-			panic(err)
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		validate := validator.New()
+		err = validate.Struct(req)
+		if err != nil {
+			for _, err := range err.(validator.ValidationErrors) {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
 		}
 
 		findData := RequestGetBTCBody{
@@ -29,19 +41,21 @@ func (s *server) GetBTCWithTime() httprouter.Handle {
 
 		myWallet, err := s.db.GetBTCInDBWithTime(findData)
 		if err != nil {
-			panic(err)
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
 
 		log.Println(myWallet)
-		res := Response{
-			RsBody: myWallet,
-		}
+
+		res.ResponseSuccess = myWallet
 
 		w.Header().Add("Content-Type", "application/json")
 		encoder := json.NewEncoder(w)
 		err = encoder.Encode(res)
 		if err != nil {
-			panic(err)
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+
 		}
 	}
 }

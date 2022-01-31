@@ -10,22 +10,16 @@ type RequestStoreBTCBody struct {
 
 //ResponseData : response if there is an error
 type ResponseData struct {
-	ResponseSuccess *ResponseSuccessBody `json:"success"`
-	ResponseBodyErr *ResponseErrorBody   `json:"error"`
+	ResponseSuccess []ResponseBody
 }
 
 //ResponseSuccessBody :  for success
 type ResponseSuccessBody struct{}
 
-//ResponseErrorBody : response if there is an error
-type ResponseErrorBody struct {
-	Error string
-}
-
 //RequestGetBTCBody : entity for request to with time
 type RequestGetBTCBody struct {
-	StartDateTime null.Time `json:"startDatetime"`
-	EndDateTime   null.Time `json:"endDatetime"`
+	StartDateTime null.Time `json:"startDatetime,require"`
+	EndDateTime   null.Time `json:"endDatetime,require"`
 }
 
 //Response : response array with time in hour

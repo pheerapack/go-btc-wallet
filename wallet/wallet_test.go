@@ -46,26 +46,3 @@ func Test_DiffTime1(t *testing.T) {
 
 	assert.Equal(t, 1, textArray)
 }
-
-// func summaryByHour(myWallet []ResponseBody) []ResponseBody {
-
-// 	var result []ResponseBody
-
-// 	startTime := input.StartDateTime.Time
-// 	endTime := input.EndDateTime.Time
-
-// 	diffTime := endTime.Sub(startTime)
-
-// 	b := math.RoundToEven(diffTime.Hours())
-// 	fmt.Println("Round :", b)
-// 	c := int(b)
-
-// 	startTimeNoMinute := time.Date(startTime.Year(), startTime.Month(), startTime.Day(), startTime.Hour(), 0, 0, 0, time.Local)
-// 	fmt.Println(startTimeNoMinute)
-
-// 	for i := 0; i < c; i++ {
-// 		for
-
-// 	}
-// 	return result
-// }

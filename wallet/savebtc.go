@@ -16,29 +16,22 @@ func (s *server) PostStoreIntoWallet() httprouter.Handle {
 		decoder := json.NewDecoder(r.Body)
 		err := decoder.Decode(&req)
 		if err != nil {
-			res = ResponseData{
-				ResponseBodyErr: &ResponseErrorBody{
-					Error: err.Error(),
-				},
-			}
-			// fmt.Fprintf(w, res)
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
 
 		err = s.db.StoreToWallet(req)
 		if err != nil {
-			res = ResponseData{
-				ResponseBodyErr: &ResponseErrorBody{
-					Error: err.Error(),
-				},
-			}
-			// fmt.Fprintf(w, res)
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
 
 		w.Header().Add("Content-Type", "application/json")
 		encoder := json.NewEncoder(w)
 		err = encoder.Encode(res)
 		if err != nil {
-			panic(err)
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
 	}
 }
