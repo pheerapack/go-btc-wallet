@@ -3,18 +3,15 @@ WORKDIR /app
 
 COPY . .
 
-RUN go build main.go
+RUN go build cmd/main.go
 
 RUN ls -lrt
 
 FROM alpine:latest  
 
 WORKDIR /application
-COPY --from=builder /app/docker/script/runjob.sh /application/runjob.sh
 COPY --from=builder /app/docker/script/running.sh /application/running.sh
-COPY --from=builder /app/status-check.csv /application/status-check.csv
-COPY --from=builder /app/config.env /application/config.env
-COPY --from=builder /app/main /application/healthcheck
+COPY --from=builder /app/main /application/btcwallet
 
 ENV PATH "$PATH:/application"
 

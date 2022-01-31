@@ -2,7 +2,6 @@ package wallet
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -16,7 +15,7 @@ func (s *server) GetBTCWithTime() httprouter.Handle {
 
 	return func(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		var req RequestGetBTCBody
-		var res ResponseData
+		var res Response
 
 		decoder := json.NewDecoder(r.Body)
 		err := decoder.Decode(&req)
@@ -47,7 +46,7 @@ func (s *server) GetBTCWithTime() httprouter.Handle {
 
 		log.Println(myWallet)
 
-		res.ResponseSuccess = myWallet
+		res.RsBody = myWallet
 
 		w.Header().Add("Content-Type", "application/json")
 		encoder := json.NewEncoder(w)
@@ -55,7 +54,6 @@ func (s *server) GetBTCWithTime() httprouter.Handle {
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
-
 		}
 	}
 }
@@ -76,7 +74,6 @@ func (d *datastore) GetBTCInDB() ([]ResponseBody, error) {
 		if err := rows.Scan(&dateTime, &amount); err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println("GetBTCInDB", dateTime, amount)
 		a := ResponseBody{
 			DateTime: null.NewTime(dateTime, true),
 			Amount:   null.FloatFrom(amount),
@@ -109,6 +106,5 @@ func (d *datastore) GetBTCInDBWithTime(req RequestGetBTCBody) ([]ResponseBody, e
 		}
 		c = append(c, a)
 	}
-	fmt.Println("GetBTCInDBWithTime", c)
 	return c, err
 }

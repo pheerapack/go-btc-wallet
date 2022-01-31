@@ -8,9 +8,9 @@ type RequestStoreBTCBody struct {
 	Amount   null.Int  `json:"amount"`
 }
 
-//ResponseData : response if there is an error
+//ResponseData : response in case success to store BTC in wallet
 type ResponseData struct {
-	ResponseSuccess []ResponseBody
+	ResponseSuccess string
 }
 
 //ResponseSuccessBody :  for success
@@ -27,7 +27,7 @@ type Response struct {
 	RsBody []ResponseBody
 }
 
-//ResponseBody : response body
+//ResponseBody : response body with time in hour
 type ResponseBody struct {
 	DateTime null.Time  `json:"date_time"`
 	Amount   null.Float `json:"amount"`

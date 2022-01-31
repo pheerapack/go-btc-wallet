@@ -3,7 +3,7 @@ networks:
   shared-network:
     driver: bridge
 services:
-  healthcheck:
+  btc_wallet:
     networks:
       - shared-network
     hostname: "host"
@@ -12,4 +12,31 @@ services:
     build:
       context: .
       dockerfile: docker/dockerfile
+    ports:
+      - "8010:8010"
     restart: always
+
+  db:
+    image: posgresql-db
+    pid: "host"
+    hostname: "host"
+    ipc: host
+    networks:
+      - shared-network
+    build:
+      context: .
+      dockerfile: docker/pg.dockerfile
+    env_file:
+      - docker/env/database.env
+    ports:
+      - "5503:5432"
+  prest:
+    networks:
+      - shared-network
+    image: prest/prest
+    ports:
+      - "3000:3000"
+    env_file:
+       - docker/env/prest.env
+    depends_on:
+      - db

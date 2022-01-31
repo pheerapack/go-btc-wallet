@@ -27,6 +27,7 @@ func (s *server) PostStoreIntoWallet() httprouter.Handle {
 		}
 
 		w.Header().Add("Content-Type", "application/json")
+		res.ResponseSuccess = "Save BTC success"
 		encoder := json.NewEncoder(w)
 		err = encoder.Encode(res)
 		if err != nil {

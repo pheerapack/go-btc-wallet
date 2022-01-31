@@ -8,17 +8,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_DiffTime1(t *testing.T) {
+func Test_summaryByHour(t *testing.T) {
 
 	time1, _ := time.Parse(time.RFC3339, "2012-11-01T20:08:41+00:00")
 	time2, _ := time.Parse(time.RFC3339, "2012-11-01T20:10:41+00:00")
 	time3, _ := time.Parse(time.RFC3339, "2012-11-01T21:08:41+00:00")
 	time4, _ := time.Parse(time.RFC3339, "2012-11-02T14:08:41+00:00")
-	// end, _ := time.Parse(time.RFC3339, "2012-11-01T22:00:41+00:00")
-	// input := RequestGetBTCBody{
-	// 	StartDateTime: null.TimeFrom(start),
-	// 	EndDateTime:   null.TimeFrom(end),
-	// }
+
 	var myWallet []ResponseBody
 	btc1 := ResponseBody{
 		DateTime: null.NewTime(time1, true),
@@ -44,5 +40,7 @@ func Test_DiffTime1(t *testing.T) {
 
 	textArray := summaryByHour(myWallet)
 
-	assert.Equal(t, 1, textArray)
+	assert.Equal(t, 1001.1, textArray[0].Amount.Float64)
+	assert.Equal(t, 5.5, textArray[1].Amount.Float64)
+	assert.Equal(t, 0.9, textArray[2].Amount.Float64)
 }
