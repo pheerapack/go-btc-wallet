@@ -17,26 +17,30 @@ services:
     restart: always
 
   db:
-    image: posgresql-db
-    pid: "host"
-    hostname: "host"
-    ipc: host
-    networks:
-      - shared-network
-    build:
-      context: .
-      dockerfile: docker/pg.dockerfile
-    env_file:
-      - docker/env/database.env
+    image: postgres:13.1
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - APP_DB_USER=mywallet
+      - APP_DB_PASS=mywallet
+      - APP_DB_NAME=my_wallet
+    volumes:
+      - ./docker/script/0-init.sh:/docker-entrypoint-initdb.d/0-init.sh
     ports:
-      - "5503:5432"
-  prest:
-    networks:
-      - shared-network
-    image: prest/prest
-    ports:
-      - "3000:3000"
-    env_file:
-       - docker/env/prest.env
-    depends_on:
-      - db
+      - 5003:5432
+  # prest:
+  #   networks:
+  #     - shared-network
+  #   image: prest/prest
+  #   ports:
+  #     - "3000:3000"
+  #   env_file:
+  #      - docker/env/prest.env
+  #   depends_on:
+  #     - db
