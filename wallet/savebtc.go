@@ -38,6 +38,6 @@ func (s *server) PostStoreIntoWallet() httprouter.Handle {
 }
 
 func (d *datastore) StoreToWallet(data RequestStoreBTCBody) error {
-	_, err := d.db.Exec("INSERT INTO my_pocket (date_time,amount) VALUES($1,$2)", data.DateTime, data.Amount)
+	_, err := d.db.Exec("INSERT INTO my_wallet (date_time,amount) VALUES($1,$2)", data.DateTime, data.Amount)
 	return err
 }

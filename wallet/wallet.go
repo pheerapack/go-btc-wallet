@@ -2,6 +2,7 @@ package wallet
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -28,13 +29,22 @@ func Wallet() {
 	log.Fatal(http.ListenAndServe(":8010", s.router))
 }
 
+const (
+	hostname     = "192.168.1.115"
+	hostport     = 5003
+	username     = "postgres"
+	password     = "postgres"
+	databasename = "my_wallet"
+)
+
 func (s *server) setupDB() {
 	log.Println("Setting up db....")
 	var err error
 	var db *sql.DB
 
-	connStr := "user=postgres password=postgres dbname=wallet"
-	db, err = sql.Open("postgres", connStr)
+	// connStr := "user=postgres password=postgres host=localhost port=5003 dbname=my_wallet"
+	pgConString := fmt.Sprintf("host=%s port=%d user=%s "+"password=%s dbname=%s sslmode=disable", hostname, hostport, username, password, databasename)
+	db, err = sql.Open("postgres", pgConString)
 	if err != nil {
 		panic(err)
 	}

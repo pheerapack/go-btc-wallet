@@ -1,0 +1,20 @@
+FROM golang:1.17-alpine AS builder
+WORKDIR /app
+
+COPY . .
+
+RUN go build cmd/rest/main.go
+
+RUN ls -lrt
+
+FROM alpine:latest  
+
+WORKDIR /application
+COPY --from=builder /app/docker/script/running-api.sh /application/running.sh
+COPY --from=builder /app/main /application/btcwallet
+
+ENV PATH "$PATH:/application"
+
+RUN chmod +x -R /application
+RUN ls -lrt /application
+ENTRYPOINT ["sh","/application/running.sh"]

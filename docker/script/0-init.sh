@@ -21,5 +21,17 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
       amount numeric,
       PRIMARY KEY (date_time)
     );
+    INSERT INTO my_wallet(date_time, amount) VALUES ('2019-10-07T15:01:07+07:00', 10);
+    INSERT INTO my_wallet(date_time, amount) VALUES ('2019-10-07T15:30:07+07:00', 1.1);
+    INSERT INTO my_wallet(date_time, amount) VALUES ('2019-10-07T15:45:07+07:00', 7);
+
+    INSERT INTO my_wallet(date_time, amount) VALUES ('2019-10-07T17:11:07+07:00', 100);
+
+    INSERT INTO my_wallet(date_time, amount) VALUES ('2019-10-07T22:05:07+07:00', 10);
+    INSERT INTO my_wallet(date_time, amount) VALUES ('2019-10-07T22:25:07+07:00', 10);
+
+    INSERT INTO my_wallet(date_time, amount) VALUES ('2019-10-08T08:45:07+07:00', 10);
+
+    INSERT INTO my_wallet(date_time, amount) VALUES ('2019-10-20T17:45:07+07:00', 10);
   COMMIT;
 EOSQL

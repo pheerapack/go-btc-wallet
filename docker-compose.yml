@@ -11,13 +11,29 @@ services:
     pid: "host"
     build:
       context: .
-      dockerfile: docker/dockerfile
+      dockerfile: docker/rest.dockerfile
     ports:
       - "8010:8010"
     restart: always
 
+  btc_wallet_monitor:
+    networks:
+      - shared-network
+    hostname: "host"
+    ipc: host
+    pid: "host"
+    build:
+      context: .
+      dockerfile: docker/monitor.dockerfile
+    restart: always
+
   db:
     image: postgres:13.1
+    networks:
+      - shared-network
+    hostname: "host"
+    ipc: host
+    pid: "host"
     healthcheck:
       test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
       timeout: 45s
@@ -34,13 +50,3 @@ services:
       - ./docker/script/0-init.sh:/docker-entrypoint-initdb.d/0-init.sh
     ports:
       - 5003:5432
-  # prest:
-  #   networks:
-  #     - shared-network
-  #   image: prest/prest
-  #   ports:
-  #     - "3000:3000"
-  #   env_file:
-  #      - docker/env/prest.env
-  #   depends_on:
-  #     - db

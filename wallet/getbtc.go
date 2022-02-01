@@ -61,7 +61,7 @@ func (s *server) GetBTCWithTime() httprouter.Handle {
 func (d *datastore) GetBTCInDB() ([]ResponseBody, error) {
 	var c []ResponseBody
 
-	stmt := "SELECT date_time,amount FROM my_pocket"
+	stmt := "SELECT date_time,amount FROM my_wallet"
 	rows, err := d.db.Query(stmt)
 	if err != nil {
 		return nil, err

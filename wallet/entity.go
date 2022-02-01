@@ -4,8 +4,8 @@ import "github.com/guregu/null"
 
 //RequestStoreBTCBody : entity for request to store db
 type RequestStoreBTCBody struct {
-	DateTime null.Time `json:"datetime"`
-	Amount   null.Int  `json:"amount"`
+	DateTime null.Time  `json:"date_time"`
+	Amount   null.Float `json:"amount"`
 }
 
 //ResponseData : response in case success to store BTC in wallet
