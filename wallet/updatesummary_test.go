@@ -41,6 +41,6 @@ func Test_summaryByHour(t *testing.T) {
 	textArray := summaryByHour(myWallet)
 
 	assert.Equal(t, 1001.1, textArray[0].Amount.Float64)
-	assert.Equal(t, 5.5, textArray[1].Amount.Float64)
-	assert.Equal(t, 0.9, textArray[2].Amount.Float64)
+	assert.Equal(t, 1006.6, textArray[1].Amount.Float64)
+	assert.Equal(t, 1007.5, textArray[2].Amount.Float64)
 }

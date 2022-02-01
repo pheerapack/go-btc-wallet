@@ -24,7 +24,7 @@ type RequestGetBTCBody struct {
 
 //Response : response array with time in hour
 type Response struct {
-	RsBody []ResponseBody
+	rsBody []ResponseBody
 }
 
 //ResponseBody : response body with time in hour

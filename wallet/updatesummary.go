@@ -2,6 +2,7 @@ package wallet
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
@@ -78,16 +79,20 @@ func summaryByHour(allBTCInMyWallet []ResponseBody) []ResponseBody {
 	var result []ResponseBody
 
 	alreadySummary := make(map[string]string)
+	var amountEachTimeUniq null.Float
+	amountEachTimeUniq = null.FloatFrom(0.00)
+
+	log.Println("TIME LOC :", time.Local)
 	for _, btcEachTime := range allBTCInMyWallet {
 
 		if _, ok := alreadySummary[btcEachTime.DateTime.Time.String()]; ok {
 			continue
 		}
-		var amountEachTimeUniq null.Float
-		btcEachTimeUniq := btcEachTime.DateTime.Time
+
+		btcEachTimeUniq := btcEachTime.DateTime.Time.Local()
 		btcEachTimeUniqNoMinuteLeft := time.Date(btcEachTimeUniq.Year(), btcEachTimeUniq.Month(), btcEachTimeUniq.Day(), btcEachTimeUniq.Hour(), 0, 0, 0, time.Local)
 		for _, btcEachTimeMatch := range allBTCInMyWallet {
-			btcEachTimeUniqMatch := btcEachTimeMatch.DateTime.Time
+			btcEachTimeUniqMatch := btcEachTimeMatch.DateTime.Time.Local()
 			btcEachTimeUniqNoMinuteRight := time.Date(btcEachTimeUniqMatch.Year(), btcEachTimeUniqMatch.Month(), btcEachTimeUniqMatch.Day(), btcEachTimeUniqMatch.Hour(), 0, 0, 0, time.Local)
 
 			if btcEachTimeUniqNoMinuteLeft.Equal(btcEachTimeUniqNoMinuteRight) {

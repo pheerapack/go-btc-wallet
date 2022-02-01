@@ -33,5 +33,6 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     INSERT INTO my_wallet(date_time, amount) VALUES ('2019-10-08T08:45:07+07:00', 10);
 
     INSERT INTO my_wallet(date_time, amount) VALUES ('2019-10-20T17:45:07+07:00', 10);
+
   COMMIT;
 EOSQL

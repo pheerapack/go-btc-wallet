@@ -1,0 +1,338 @@
+{
+	"info": {
+		"_postman_id": "be2de393-eca8-4476-be8c-0a52a6f4bcb8",
+		"name": "My-BTC-Wallet Test case",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1.query all btc in wallet and summary by hour before insert",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var expectedHttpStatus = 200;",
+							"",
+							"pm.test(\"Status code is \" + expectedHttpStatus, function () {",
+							"    pm.response.to.have.status(expectedHttpStatus);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"",
+							"pm.test(\"date_time is 2019-10-07T08:00:00Z\", function () {",
+							"    pm.expect(jsonData[0].date_time).to.eql(\"2019-10-07T08:00:00Z\");",
+							"});",
+							"pm.test(\"amount of date time 2019-10-07T08:00:00Z is 18.1\", function () {",
+							"    pm.expect(jsonData[0].amount).to.eql(18.1);",
+							"});",
+							"",
+							"pm.test(\"date_time is 2019-10-07T10:00:00Z\", function () {",
+							"    pm.expect(jsonData[1].date_time).to.eql(\"2019-10-07T10:00:00Z\");",
+							"});",
+							"pm.test(\"amount of date time 2019-10-07T10:00:00Z is 118.1\", function () {",
+							"    pm.expect(jsonData[1].amount).to.eql(118.1);",
+							"});",
+							"",
+							"pm.test(\"date_time is 2019-10-07T15:00:00Z\", function () {",
+							"    pm.expect(jsonData[2].date_time).to.eql(\"2019-10-07T15:00:00Z\");",
+							"});",
+							"pm.test(\"amount of date time 2019-10-07T15:00:00Z is 138.1\", function () {",
+							"    pm.expect(jsonData[2].amount).to.eql(138.1);",
+							"});",
+							"",
+							"pm.test(\"date_time is 2019-10-08T01:00:00Z\", function () {",
+							"    pm.expect(jsonData[3].date_time).to.eql(\"2019-10-08T01:00:00Z\");",
+							"});",
+							"pm.test(\"amount of date time 2019-10-08T01:00:00Z is 148.1\", function () {",
+							"    pm.expect(jsonData[3].amount).to.eql(148.1);",
+							"});",
+							"",
+							"pm.test(\"date_time is 2019-10-20T10:00:00Z\", function () {",
+							"    pm.expect(jsonData[4].date_time).to.eql(\"2019-10-20T10:00:00Z\");",
+							"});",
+							"pm.test(\"amount of date time 2019-10-20T10:00:00Z is 158.1\", function () {",
+							"    pm.expect(jsonData[4].amount).to.eql(158.1);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"startDatetime\": \"2019-10-06T14:45:07+07:00\",\n    \"endDatetime\": \"2019-10-21T15:45:07+07:00\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8010/getbtc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8010",
+					"path": [
+						"getbtc"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2.save btc to wallet",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var expectedHttpStatus = 200;",
+							"",
+							"pm.environment.unset(\"tries\");",
+							"",
+							"",
+							"",
+							"pm.test(\"Status code is \" + expectedHttpStatus, function () {",
+							"    pm.response.to.have.status(expectedHttpStatus);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"",
+							"pm.test(\"Expect success\", function () {",
+							"    pm.expect(jsonData.ResponseSuccess).to.eql(\"Save BTC success\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"date_time\": \"2019-10-20T17:46:07+07:00\",\n    \"amount\": 2.5\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8010/storebtc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8010",
+					"path": [
+						"storebtc"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3.query all btc in wallet and summary by hour after insert",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var expectedHttpStatus = 200;",
+							"",
+							"pm.test(\"Status code is \" + expectedHttpStatus, function () {",
+							"    pm.response.to.have.status(expectedHttpStatus);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"",
+							"pm.test(\"date_time is 2019-10-07T08:00:00Z\", function () {",
+							"    pm.expect(jsonData[0].date_time).to.eql(\"2019-10-07T08:00:00Z\");",
+							"});",
+							"pm.test(\"amount of date time 2019-10-07T08:00:00Z is 18.1\", function () {",
+							"    pm.expect(jsonData[0].amount).to.eql(18.1);",
+							"});",
+							"",
+							"pm.test(\"date_time is 2019-10-07T10:00:00Z\", function () {",
+							"    pm.expect(jsonData[1].date_time).to.eql(\"2019-10-07T10:00:00Z\");",
+							"});",
+							"pm.test(\"amount of date time 2019-10-07T10:00:00Z is 118.1\", function () {",
+							"    pm.expect(jsonData[1].amount).to.eql(118.1);",
+							"});",
+							"",
+							"pm.test(\"date_time is 2019-10-07T15:00:00Z\", function () {",
+							"    pm.expect(jsonData[2].date_time).to.eql(\"2019-10-07T15:00:00Z\");",
+							"});",
+							"pm.test(\"amount of date time 2019-10-07T15:00:00Z is 138.1\", function () {",
+							"    pm.expect(jsonData[2].amount).to.eql(138.1);",
+							"});",
+							"",
+							"pm.test(\"date_time is 2019-10-08T01:00:00Z\", function () {",
+							"    pm.expect(jsonData[3].date_time).to.eql(\"2019-10-08T01:00:00Z\");",
+							"});",
+							"pm.test(\"amount of date time 2019-10-08T01:00:00Z is 148.1\", function () {",
+							"    pm.expect(jsonData[3].amount).to.eql(148.1);",
+							"});",
+							"",
+							"pm.test(\"date_time is 2019-10-20T10:00:00Z\", function () {",
+							"    pm.expect(jsonData[4].date_time).to.eql(\"2019-10-20T10:00:00Z\");",
+							"});",
+							"pm.test(\"amount of date time 2019-10-20T10:00:00Z is 160.6\", function () {",
+							"    pm.expect(jsonData[4].amount).to.eql(160.6);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"startDatetime\": \"2019-10-06T14:45:07+07:00\",\n    \"endDatetime\": \"2019-10-21T15:45:07+07:00\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8010/getbtc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8010",
+					"path": [
+						"getbtc"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4.query all btc in wallet and summary by invalid input",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var expectedHttpStatus = 400;",
+							"",
+							"pm.test(\"Status code is \" + expectedHttpStatus, function () {",
+							"    pm.response.to.have.status(expectedHttpStatus);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"startDatetime\": \"test\",\n    \"endDatetime\": \"2019-10-05T15:45:07+07:00\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8010/getbtc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8010",
+					"path": [
+						"getbtc"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5.query all btc in wallet and summary by same hour",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var expectedHttpStatus = 200;",
+							"",
+							"pm.test(\"Status code is \" + expectedHttpStatus, function () {",
+							"    pm.response.to.have.status(expectedHttpStatus);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"",
+							"pm.test(\"date_time is 2019-10-07T08:00:00Z\", function () {",
+							"    pm.expect(jsonData[0].date_time).to.eql(\"2019-10-07T08:00:00Z\");",
+							"});",
+							"pm.test(\"amount of date time 2019-10-07T08:00:00Z is 18.1\", function () {",
+							"    pm.expect(jsonData[0].amount).to.eql(18.1);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"startDatetime\": \"2019-10-07T15:45:07+07:00\",\n    \"endDatetime\": \"2019-10-07T15:45:07+07:00\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8010/getbtc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8010",
+					"path": [
+						"getbtc"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

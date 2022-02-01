@@ -2,6 +2,7 @@ package wallet
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -16,7 +17,7 @@ func (s *server) GetBTCWithTime() httprouter.Handle {
 
 	return func(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		var req RequestGetBTCBody
-		var res Response
+		var res []ResponseBody
 
 		decoder := json.NewDecoder(r.Body)
 		err := decoder.Decode(&req)
@@ -34,20 +35,22 @@ func (s *server) GetBTCWithTime() httprouter.Handle {
 			}
 		}
 
+		//Convert to local time before query
+		atLocalTimeStart := req.StartDateTime.Time.Local()
+		atLocalTimeEnd := req.EndDateTime.Time.Local()
+
 		findData := RequestGetBTCBody{
-			StartDateTime: null.NewTime(time.Date(req.StartDateTime.Time.Year(), req.StartDateTime.Time.Month(), req.StartDateTime.Time.Day(), req.StartDateTime.Time.Hour(), 0, 0, 0, time.Local), true),
-			EndDateTime:   null.NewTime(time.Date(req.EndDateTime.Time.Year(), req.EndDateTime.Time.Month(), req.EndDateTime.Time.Day(), req.EndDateTime.Time.Hour(), 0, 0, 0, time.Local), true),
+			StartDateTime: null.NewTime(time.Date(atLocalTimeStart.Year(), atLocalTimeStart.Month(), atLocalTimeStart.Day(), atLocalTimeStart.Hour(), 0, 0, 0, time.Local), true),
+			EndDateTime:   null.NewTime(time.Date(atLocalTimeEnd.Year(), atLocalTimeEnd.Month(), atLocalTimeEnd.Day(), atLocalTimeEnd.Hour(), 0, 0, 0, time.Local), true),
 		}
 
-		myWallet, err := s.db.GetBTCInDBWithTime(findData)
+		fmt.Println("FIND DATA :", findData)
+
+		res, err = s.db.GetBTCInDBWithTime(findData)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-
-		log.Println(myWallet)
-
-		res.RsBody = myWallet
 
 		w.Header().Add("Content-Type", "application/json")
 		encoder := json.NewEncoder(w)
@@ -61,7 +64,7 @@ func (s *server) GetBTCWithTime() httprouter.Handle {
 
 //GetBTCInDB : get history from database
 func (d *datastore) GetBTCInDB() ([]ResponseBody, error) {
-	var c []ResponseBody
+	var resp []ResponseBody
 
 	stmt := "SELECT date_time,amount FROM my_wallet"
 	rows, err := d.db.Query(stmt)
@@ -76,13 +79,13 @@ func (d *datastore) GetBTCInDB() ([]ResponseBody, error) {
 		if err := rows.Scan(&dateTime, &amount); err != nil {
 			log.Fatal(err)
 		}
-		a := ResponseBody{
+		queryData := ResponseBody{
 			DateTime: null.NewTime(dateTime, true),
 			Amount:   null.FloatFrom(amount),
 		}
-		c = append(c, a)
+		resp = append(resp, queryData)
 	}
-	return c, err
+	return resp, err
 }
 
 //GetBTCInDBWithTime : query betwwen hour
@@ -103,10 +106,13 @@ func (d *datastore) GetBTCInDBWithTime(req RequestGetBTCBody) ([]ResponseBody, e
 			log.Fatal(err)
 		}
 
+		log.Println("dateTime: ", dateTime)
+
 		structRes := ResponseBody{
 			DateTime: null.NewTime(dateTime, true),
 			Amount:   null.FloatFrom(amount),
 		}
+		log.Println("structRes", structRes)
 		resp = append(resp, structRes)
 	}
 	return resp, err
