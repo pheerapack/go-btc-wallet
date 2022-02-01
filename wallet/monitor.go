@@ -2,6 +2,8 @@ package wallet
 
 import (
 	"log"
+	"os"
+	"strconv"
 	"time"
 
 	_ "github.com/lib/pq"
@@ -13,7 +15,15 @@ func Monitor() {
 	s := &server{}
 	s.setupDB()
 
-	sleepTime := 10
+	envSleepTime := os.Getenv("MONITORSLEEPTIME")
+	sleepTime, err := strconv.Atoi(envSleepTime)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	if sleepTime < 0 {
+		sleepTime = 10
+	}
 
 	for {
 

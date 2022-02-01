@@ -12,6 +12,12 @@ services:
     build:
       context: .
       dockerfile: docker/rest.dockerfile
+    environment:
+      - PG_HOSTNAME=localhost
+      - PG_HOSTPORT=5003
+      - PG_USERNAME=postgres
+      - PG_PASSWORD=postgres
+      - PG_DBNAME=my_wallet
     ports:
       - "8010:8010"
     restart: always
@@ -25,6 +31,13 @@ services:
     build:
       context: .
       dockerfile: docker/monitor.dockerfile
+    environment:
+      - MONITORSLEEPTIME=12
+      - PG_HOSTNAME=localhost
+      - PG_HOSTPORT=5003
+      - PG_USERNAME=postgres
+      - PG_PASSWORD=postgres
+      - PG_DBNAME=my_wallet
     restart: always
 
   db:
