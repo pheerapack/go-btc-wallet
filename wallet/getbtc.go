@@ -2,8 +2,6 @@ package wallet
 
 import (
 	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
 	"time"
 
@@ -44,8 +42,6 @@ func (s *server) GetBTCWithTime() httprouter.Handle {
 			EndDateTime:   null.NewTime(time.Date(atLocalTimeEnd.Year(), atLocalTimeEnd.Month(), atLocalTimeEnd.Day(), atLocalTimeEnd.Hour(), 0, 0, 0, time.Local), true),
 		}
 
-		fmt.Println("FIND DATA :", findData)
-
 		res, err = s.db.GetBTCInDBWithTime(findData)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -77,7 +73,7 @@ func (d *datastore) GetBTCInDB() ([]ResponseBody, error) {
 		var dateTime time.Time
 		var amount float64
 		if err := rows.Scan(&dateTime, &amount); err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 		queryData := ResponseBody{
 			DateTime: null.NewTime(dateTime, true),
@@ -103,16 +99,13 @@ func (d *datastore) GetBTCInDBWithTime(req RequestGetBTCBody) ([]ResponseBody, e
 		var dateTime time.Time
 		var amount float64
 		if err := rows.Scan(&dateTime, &amount); err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
-
-		log.Println("dateTime: ", dateTime)
 
 		structRes := ResponseBody{
 			DateTime: null.NewTime(dateTime, true),
 			Amount:   null.FloatFrom(amount),
 		}
-		log.Println("structRes", structRes)
 		resp = append(resp, structRes)
 	}
 	return resp, err

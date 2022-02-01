@@ -2,7 +2,6 @@ package wallet
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"time"
 
@@ -82,7 +81,6 @@ func summaryByHour(allBTCInMyWallet []ResponseBody) []ResponseBody {
 	var amountEachTimeUniq null.Float
 	amountEachTimeUniq = null.FloatFrom(0.00)
 
-	log.Println("TIME LOC :", time.Local)
 	for _, btcEachTime := range allBTCInMyWallet {
 
 		if _, ok := alreadySummary[btcEachTime.DateTime.Time.String()]; ok {

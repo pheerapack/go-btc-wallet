@@ -13,14 +13,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// const (
-// 	hostname     = "localhost"
-// 	hostport     = 5003
-// 	username     = "postgres"
-// 	password     = "postgres"
-// 	databasename = "my_wallet"
-// )
-
 type datastore struct {
 	db *sql.DB
 }
