@@ -11,6 +11,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+//GetBTCWithTime : main function for query data from api rest
 func (s *server) GetBTCWithTime() httprouter.Handle {
 
 	return func(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -58,6 +59,7 @@ func (s *server) GetBTCWithTime() httprouter.Handle {
 	}
 }
 
+//GetBTCInDB : get history from database
 func (d *datastore) GetBTCInDB() ([]ResponseBody, error) {
 	var c []ResponseBody
 
@@ -83,8 +85,9 @@ func (d *datastore) GetBTCInDB() ([]ResponseBody, error) {
 	return c, err
 }
 
+//GetBTCInDBWithTime : query betwwen hour
 func (d *datastore) GetBTCInDBWithTime(req RequestGetBTCBody) ([]ResponseBody, error) {
-	var c []ResponseBody
+	var resp []ResponseBody
 
 	stmt := "SELECT date_time,amount FROM summary_by_hour WHERE date_time BETWEEN $1 AND $2"
 	rows, err := d.db.Query(stmt, req.StartDateTime.Time, req.EndDateTime.Time)
@@ -100,11 +103,11 @@ func (d *datastore) GetBTCInDBWithTime(req RequestGetBTCBody) ([]ResponseBody, e
 			log.Fatal(err)
 		}
 
-		a := ResponseBody{
+		structRes := ResponseBody{
 			DateTime: null.NewTime(dateTime, true),
 			Amount:   null.FloatFrom(amount),
 		}
-		c = append(c, a)
+		resp = append(resp, structRes)
 	}
-	return c, err
+	return resp, err
 }

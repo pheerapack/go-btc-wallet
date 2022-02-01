@@ -2,7 +2,6 @@ package wallet
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -10,6 +9,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+//UpdateSummary : this func is main process summary for api rest
 func (s *server) UpdateSummary() httprouter.Handle {
 
 	return func(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -29,6 +29,7 @@ func (s *server) UpdateSummary() httprouter.Handle {
 	}
 }
 
+//UpdateSummayByHour : main business logic for summary
 func (d *datastore) UpdateSummayByHour() error {
 
 	err := d.DeleteSummayByHour()
@@ -43,8 +44,6 @@ func (d *datastore) UpdateSummayByHour() error {
 
 	allBTCInMyWalletSummary := summaryByHour(allBTCInMyWallet)
 
-	fmt.Println("allBTCInMyWalletSummary : ", allBTCInMyWalletSummary)
-
 	err = d.StoreSummayByHour(allBTCInMyWalletSummary)
 	if err != nil {
 		return err
@@ -53,10 +52,10 @@ func (d *datastore) UpdateSummayByHour() error {
 	return nil
 }
 
+//StoreSummayByHour : save to database
 func (d *datastore) StoreSummayByHour(data []ResponseBody) error {
 
 	for _, btcEachTime := range data {
-		fmt.Println("Saving...:", btcEachTime.DateTime, btcEachTime.Amount)
 		_, err := d.db.Exec("INSERT INTO summary_by_hour (date_time,amount) VALUES($1,$2)", btcEachTime.DateTime, btcEachTime.Amount)
 		if err != nil {
 			return err
@@ -66,10 +65,10 @@ func (d *datastore) StoreSummayByHour(data []ResponseBody) error {
 	return nil
 }
 
+//DeleteSummayByHour : clear data in table summary each time that run
 func (d *datastore) DeleteSummayByHour() error {
 
 	_, err := d.db.Exec("DELETE FROM summary_by_hour")
-
 	return err
 
 }
@@ -79,19 +78,15 @@ func summaryByHour(allBTCInMyWallet []ResponseBody) []ResponseBody {
 	var result []ResponseBody
 
 	alreadySummary := make(map[string]string)
-	for i, btcEachTime := range allBTCInMyWallet {
+	for _, btcEachTime := range allBTCInMyWallet {
 
-		fmt.Println(i, btcEachTime)
-		fmt.Println("A1")
 		if _, ok := alreadySummary[btcEachTime.DateTime.Time.String()]; ok {
 			continue
 		}
-		fmt.Println("A2")
 		var amountEachTimeUniq null.Float
 		btcEachTimeUniq := btcEachTime.DateTime.Time
 		btcEachTimeUniqNoMinuteLeft := time.Date(btcEachTimeUniq.Year(), btcEachTimeUniq.Month(), btcEachTimeUniq.Day(), btcEachTimeUniq.Hour(), 0, 0, 0, time.Local)
-		for j, btcEachTimeMatch := range allBTCInMyWallet {
-			fmt.Println(i, j, btcEachTimeMatch)
+		for _, btcEachTimeMatch := range allBTCInMyWallet {
 			btcEachTimeUniqMatch := btcEachTimeMatch.DateTime.Time
 			btcEachTimeUniqNoMinuteRight := time.Date(btcEachTimeUniqMatch.Year(), btcEachTimeUniqMatch.Month(), btcEachTimeUniqMatch.Day(), btcEachTimeUniqMatch.Hour(), 0, 0, 0, time.Local)
 
@@ -101,12 +96,11 @@ func summaryByHour(allBTCInMyWallet []ResponseBody) []ResponseBody {
 			}
 
 		}
-		a := ResponseBody{
+		eachHour := ResponseBody{
 			DateTime: null.NewTime(btcEachTimeUniqNoMinuteLeft, true),
 			Amount:   amountEachTimeUniq,
 		}
-		result = append(result, a)
+		result = append(result, eachHour)
 	}
-	fmt.Println("AAAAA", result)
 	return result
 }

@@ -11,6 +11,14 @@ import (
 	_ "github.com/lib/pq"
 )
 
+const (
+	hostname     = "192.168.1.115"
+	hostport     = 5003
+	username     = "postgres"
+	password     = "postgres"
+	databasename = "my_wallet"
+)
+
 type datastore struct {
 	db *sql.DB
 }
@@ -28,14 +36,6 @@ func Wallet() {
 
 	log.Fatal(http.ListenAndServe(":8010", s.router))
 }
-
-const (
-	hostname     = "192.168.1.115"
-	hostport     = 5003
-	username     = "postgres"
-	password     = "postgres"
-	databasename = "my_wallet"
-)
 
 func (s *server) setupDB() {
 	log.Println("Setting up db....")

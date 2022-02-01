@@ -7,6 +7,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+//PostStoreIntoWallet : main function to save btc with api rest
 func (s *server) PostStoreIntoWallet() httprouter.Handle {
 
 	return func(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
